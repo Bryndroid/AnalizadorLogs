@@ -1,27 +1,29 @@
-# Analizador de Logs y errores de formato
-Como parte de la actividad de la tercera semana, se desarrollo un analizador de logs y de formato con el principio de AI-First para comprender la importancia del involucramiento humando en las decisiones cruciales y el uso de la IA como herramiento y no como orquestador principal.
+# Analizador de logs y errores de formato
 
+Como parte de la actividad de la tercera semana, desarrollé un analizador de logs y de formato siguiendo el principio AI-First. El objetivo fue comprender la importancia del involucramiento humano en las decisiones cruciales y el uso de la IA como herramienta, no como orquestador principal.
 
-## Involucramiento humanos
+## Involucramiento humano
 
-Primero, necesite recordarme de las herramientas que nos provee Node.js para acceder a directorios del sistema y leer lineas de texto para conocer el area que tiene que trabajar la IA y las limitantes.
-Luego estableci las funcionalidades principales del analizador, que aparte de la idea principal que es analizador logs le incorpore una deteccion automatica de archivos txt dentro del directorio "ArchivosPrueba" sin necesidad de esa tarea manual de indicarle que archivo analizar. Igualmente esa funcionalidad se la deje como una funcionalidad legacy
+Primero, necesité recordar las herramientas que Node.js proporciona para acceder a los directorios del sistema y leer líneas de texto. Esto me permitió delimitar el área en la que debía trabajar la IA y establecer sus limitaciones.
 
-Por siguiente, empece a establecer la estructura principal del codigo manualmente. Gracias a que estableci la logica primero y que ya tenia experiencia orquestando flujos de trabajo orqueste el siguiente codigo como estructura skeleton:
-------
-class CheckLogsEngine{
+Luego, definí las funcionalidades principales del analizador. Además de su propósito principal (analizar logs), incorporé la detección automática de archivos `.txt` dentro del directorio `ArchivosPrueba`, sin necesidad de indicarle manualmente qué archivo debía analizar. También conservé la posibilidad de analizar un archivo específico como funcionalidad alternativa (legacy).
+
+A continuación, empecé a establecer manualmente la estructura principal del código. Como primero definí la lógica y ya tenía experiencia orquestando flujos de trabajo, preparé el siguiente esqueleto (skeleton) para que la IA trabajara sobre una base clara:
+
+```javascript
+class CheckLogsEngine {
     // VARIABLES PARA VALIDACIONES.
     #VALID_DATE_FORMAT = /^\d{4}-\d{2}-\d{2}$/;
     #MAX_CHARACTERS = 250;
     #MIN_CHARACTERS = 10;
-    #VALID_FORMAT = 'txt'; //Unicamente vamos a leer txt.
+    #VALID_FORMAT = 'txt'; // Únicamente vamos a leer archivos TXT.
 
-    // STORAGE DE SEVERITYS
+    // STORAGE DE SEVERITIES
     #SEVERITY_TYPES_LOGS = [{
         full: "INFO",
         redu: "INF",
         color: "#1713eb",
-        count:0
+        count: 0
     }, {
         full: "WARNING",
         redu: "WARN",
@@ -36,141 +38,181 @@ class CheckLogsEngine{
 
     // STORAGE DE ERRORES
     #INVALID_COUNT = 0;
-    #INVALID_LINE = []; //Aqui pondras que en que linea esta el error y el message. Tendra esta estructura {line:0,message:"default", case:''}. En case unicamente puede ser ADVERTENCIA o ERROR. 
+    #INVALID_LINE = []; // Aquí se guardará la línea con el error y su mensaje.
+                          // Estructura: { line: 0, message: "default", case: '' }.
+                          // En case únicamente puede ser ADVERTENCIA o ERROR.
 
     #fileUrl;
 
     constructor(url = '') {
-        this.#fileUrl = url;       
+        this.#fileUrl = url;
     }
-    //Funcion principal
-    initChecking(){
-        const initUrl = this.#fileUrl != "" ? this.#fileUrl : "/ArchivosPrueba";
-        
-    }
-    //Funciones auxiliares. 
-    //Funcion para guardar en base a que severity es. Unicamente lleva el contador de los serveritys y los aumenta si tienen el formato correcto.
-    #storageSeverity(){
 
+    // Función principal.
+    initChecking() {
+        const initUrl = this.#fileUrl !== "" ? this.#fileUrl : "./ArchivosPrueba";
     }
-    //Funcion para guardar y llevar el conteo de las lineas invalidas. Unicamente para guardar
-    #storageError(){
 
-    }
-    //Funcion para analizar el formato 
-    //Aqui adentro tambien ira la deteccion de la fecha, si esta mal formateada. Aqui contendra todas las instrucciones que te he mencionado.
-    #checkFormat(){
-        
-    }
-    //Funcion para imprimir. Debe de imprimir el total de Eventos detectados, la cantidad de eventos por tipos, el numero de lineas mal formateadas / incompletas y mostrar esas lineas e indicar que esta mal en el formato. Esta funcion solo SERA MOSTRAR.
-    //Si se elige el modo automatico, se debe de preguntar al usuario que si quiere seguir analizando otros archivos LUEGO de que termine uno.
-    #logSeverity(){
+    // Funciones auxiliares.
+
+    // Guarda y aumenta el contador según el severity,
+    // siempre que el formato sea correcto.
+    #storageSeverity() {
 
     }
 
+    // Guarda y lleva el conteo de las líneas inválidas.
+    #storageError() {
+
+    }
+
+    // Analiza el formato.
+    // También contiene la detección y validación de la fecha.
+    #checkFormat() {
+
+    }
+
+    // Imprime el total de eventos detectados, la cantidad de eventos
+    // por tipo y el número de líneas mal formateadas o incompletas.
+    // También muestra las líneas afectadas e indica qué está mal.
+    // Esta función únicamente se encarga de mostrar los resultados.
+    //
+    // Si se elige el modo automático, debe preguntar al usuario
+    // si desea continuar analizando otros archivos después de terminar uno.
+    #logSeverity() {
+
+    }
 }
 
-//Tiene que haber dos casos de prueba:
-const analizerWithUrl = new CheckLogsEngine("./archivoX.txt"); //Cuando se analiza directamente un archivo especifico.
-const analizerWithoutUrl = new CheckLogsEngine(); //O cuando se decide analizar todo un directorio donde hay varios archivos.
-------
-Con esto, hago los cimientos donde la IA debe de trabajar y asi evitar contextos incoherentes de logica.
+// Casos de prueba:
+const analizerWithUrl = new CheckLogsEngine("./archivoX.txt");
+// Analiza directamente un archivo específico.
 
-Proximo a esto empece a crear el Prompt Estructurado siguiendo la estrategia de Few Shot (integracion de varios ejemplos) delimitando el area de trabajo de la IA.
+const analizerWithoutUrl = new CheckLogsEngine();
+// Analiza todos los archivos del directorio indicado.
+```
 
-Dentro de ese prompt establezco la arquitectura general de los logs, el formato que deben de seguir, los casos de borde (que yo los tomo como ADVERTENCIAS) y los casos aceptables. Tambien restricciones directas de la IA.
+Con esta estructura establecí los cimientos sobre los que debía trabajar la IA. De esta manera, evité que generara una lógica incoherente con el funcionamiento que tenía pensado.
+
+Después, empecé a crear el prompt estructurado siguiendo la estrategia Few-Shot (integración de varios ejemplos), con el objetivo de delimitar aún más el área de trabajo de la IA.
+
+En ese prompt establecí la arquitectura general de los logs, el formato que debían seguir, los casos de borde (que clasifiqué como advertencias), los casos aceptables y las restricciones directas para la IA.
 
 ## Involucramiento de la IA
 
-Ocupe el Agente Copilot en su version gratuita en VS Code en modo agent para generar el codigo funcional del analizador en base a la arquitectura general que le plantie en el codigo. 
-### Prompt Estructurado
--#Personalidad
-Eres un desarrollador senior en entorno Node.js, backend en general y conoces los principios ACID, SOLID y de optimización de código para JavaScript.
+Utilicé el agente Copilot, en su versión gratuita dentro de VS Code y en modo Agent, para generar el código funcional del analizador a partir de la arquitectura general que había planteado en el código.
 
--#Instruccion
+### Prompt estructurado
 
-Necesito que completes mi clase analizador de logs automatico (los archivos estarán en el directorio ArchivosPrueba) o de archivo unico. En el código esta explicado la estructura general de la clase y que funciones ocupas para generar el flujo correcto.
-Este analizador tiene como propósito, en base a un archivo.txt, detectar los logs y categorizarlos en base a su severity, también detectar líneas con formato incorrecto y dejar señalizado donde esta ese error. Si entra en el modo automático, cada vez que analice un archivo nuevo debe de pedirle confirmación al usuario para seguir 
+**Personalidad**
 
--#Ejemplos
+Eres un desarrollador sénior especializado en Node.js y desarrollo backend. Conoces los principios ACID y SOLID, así como las buenas prácticas de optimización de código JavaScript.
 
-Se espera que dentro del txt exista este formato:
-· [INFO] 2025-01-10 User logged in
-· [ERROR] 2025-01-10 Failed to connect to database
-· [WARNING] Invalid password attempt.
+**Instrucción**
 
--#Reglas
+Necesito que completes mi clase analizadora de logs, tanto para el modo automático (los archivos estarán en el directorio `ArchivosPrueba`) como para el análisis de un único archivo. En el código está explicada la estructura general de la clase y las funciones que necesitas implementar para generar el flujo correcto.
 
-Cada linea debe de contener: 
-- El log severity dentro de corchetes [].
-- Seguido de la fecha de la forma YYYY-MM-DD.
-- Descripción. Máximo 250 caracteres. Minimo 10 caracteres.
-- Debe de existir espacios entre caracteres. Ejemplo: "[SEVERITY] DATE DESCRCIPCION".
+Este analizador tiene como propósito leer un archivo `.txt`, detectar los logs y categorizarlos según su severity. También debe detectar las líneas con formato incorrecto e indicar dónde se encuentra cada error.
 
-Se considera como error en el formato CUALQUIER linea que no cumpla con el ejemplo que te mande o con las variables para validaciones.
-Dentro del error del formato pueden existir:
-- Advertencia (Edge cases): 
-	- La fecha no va después del severity. Ejemplo: "[WARNING] Invalid Password Attempt 2020-01-02"
- 	- El Severity no va dentro de corchetes. Ejemplo: "WARN 2020-01-02 Invalid Password Attempt"
+Si se utiliza el modo automático, cada vez que termine de analizar un archivo debe pedirle confirmación al usuario para continuar con el siguiente.
 
-- Errores:
-	- Cuando no se cumple estrictamente las reglas que te mande anteriormente o el formato estipulado en las variables de validación. Ejemplo: Sobrepasa el limite de caracteres. No es 	un archivo.txt, incorrecto nombre a los severity
-	- El Severity va en minúsculas. Ejemplo: "[warn] 2020-01-02 Invalid Password Attempt".
-	- La fecha no tiene el formato correcto. Ejemplo: "[WARN] 2020/01/02 Invalid Password Attempt".
-	- Cualquier linea vacia o con texto que no este ligada a ningún severity.
-	- Un severity sin detalle. Ejemplo: "[WARN] " 
+**Ejemplos**
 
-#Impresion
-Debes de imprimir mensajes cuando se detecte algún error en el formato. Este mensaje debe de ser acorde a la descripción del error, si es de advertencia (Edge Cases) o si es Error directo. Existen colores que debes de respetar estrictamente al momento de imprimirlo en la consola de Node.js.
+Se espera que dentro del archivo `.txt` existan líneas con este formato:
 
-El formato de impresión debe de seguir esto:
+- `[INFO] 2025-01-10 User logged in`
+- `[ERROR] 2025-01-10 Failed to connect to database`
+- `[WARNING] 2025-01-10 Invalid password attempt`
 
+**Reglas**
+
+Cada línea debe contener:
+
+- El nivel de severidad (severity) dentro de corchetes `[]`.
+- La fecha inmediatamente después del severity, con el formato `YYYY-MM-DD`.
+- Una descripción de entre 10 y 250 caracteres.
+- Espacios entre cada elemento. Ejemplo: `[SEVERITY] DATE DESCRIPTION`.
+
+Se considera un error de formato cualquier línea que no cumpla con las reglas anteriores o con las variables de validación definidas en la clase.
+
+Los problemas de formato se clasifican de la siguiente manera:
+
+**Advertencias (casos de borde):**
+
+- La fecha no aparece después del severity. Ejemplo: `[WARNING] Invalid Password Attempt 2020-01-02`.
+- El severity no está dentro de corchetes. Ejemplo: `WARN 2020-01-02 Invalid Password Attempt`.
+
+**Errores:**
+
+- No se cumplen estrictamente las reglas indicadas o el formato estipulado en las variables de validación. Por ejemplo: se supera el límite de caracteres, el archivo no es `.txt` o se utiliza un nombre de severity incorrecto.
+- El severity está escrito en minúsculas. Ejemplo: `[warn] 2020-01-02 Invalid Password Attempt`.
+- La fecha no tiene el formato correcto. Ejemplo: `[WARN] 2020/01/02 Invalid Password Attempt`.
+- La línea está vacía o contiene texto que no está asociado a ningún severity.
+- El severity no tiene una descripción. Ejemplo: `[WARN] `.
+
+**Impresión**
+
+Debes imprimir mensajes cuando se detecte algún error de formato. El mensaje debe corresponder a la descripción del problema e indicar si se trata de una advertencia (edge case) o de un error directo.
+
+Debes respetar estrictamente los colores definidos para cada tipo de severidad al imprimir los resultados en la consola de Node.js.
+
+El formato de impresión debe seguir esta estructura:
+
+```text
 ========== RESULTADOS ==========
----Metricas:
-----> Total lineas analizadas: XX.
+--- Métricas:
+----> Total de líneas analizadas: XX.
 ----> INFO detectados: XX.
 ----> WARNINGS detectados: XX.
 ----> ERROR detectados: XX.
 
----Errores en el formato:
+--- Errores en el formato:
 ----> Total de errores: XX.
--------
 
-[ADVERTENCIA || ERROR] En la linea XX : 
+[ADVERTENCIA || ERROR] En la línea XX:
 
-"[warn] 2020-01-02 Invalid Password Attempt" . Severity sin mayuscula.
+"[warn] 2020-01-02 Invalid Password Attempt".
+Motivo: el severity no está escrito en mayúsculas.
 
 --------
+```
 
--#Restricciones
+**Restricciones**
 
-- No debes de generar ni crear código que agregue complejidad innecesaria.
-- No crees archivos nuevos
-- Debes de seguir mi estructura que te asigne.
-- No ejecutes comandos en consola que no sea de testing.
+- No debes generar ni crear código que agregue complejidad innecesaria.
+- No crees archivos nuevos.
+- Debes seguir la estructura que te asigné.
+- No ejecutes comandos en la consola que no sean de testing.
 - No generes archivos de testing.
-- Para acceder al directorio ocupa funciones nativas de Node.js. No descargues librerías para esto.
+- Para acceder al directorio, utiliza funciones nativas de Node.js. No descargues librerías para esta tarea.
 
-# Errores Corregidos
+## Errores corregidos
 
-Al delimitar bastante y decirle explicitamente a la IA que camino tomar los errores se reducen drasticamente.
+Al delimitar el contexto y especificar explícitamente a la IA qué camino debía seguir, los errores se redujeron considerablemente.
 
-Igualmente fui capaz de detectar dos errores dentro del codigo:
-- La deteccion de una linea vacia se debe de considerar una ADVERTENCIA dentro de los errores de formato. Corregi el mensaje y el case.
-- La fecha no validaba correctamente los meses (se ajustaba como 11, omitiendo el mes 12).
+Igualmente, fui capaz de detectar dos errores dentro del código:
 
-# Aprendizaje
+- La detección de una línea vacía debía considerarse una **ADVERTENCIA** dentro de los errores de formato. Corregí tanto el mensaje como el tipo de caso (`case`).
+- La validación de la fecha no comprobaba correctamente los meses: el límite superior estaba configurado de forma que se omitía el mes 12. Corregí esa validación.
 
-Con este mindset, fui capaz de desarrollar este analizador en 30 minutos, donde me lleve mas tiempo creando el prompt, la arquitectura skeleton del archivo y analizando el codigo que la propia IA generando el codigo. Considero que es un tiempo bastante aceptable para lo que se trata de crear proyectos con IA, ya que siempre se necesita un involucramiento humano y eso conlleva tiempo. 
+## Aprendizaje
 
-Los resultados de la IA mejoran muchisimo cuando se define una estructura clara, limitaciones y reglas de negocio por cuenta propia, ya que se evita de esa problematica de pensar que la IA te va a entender tu proyecto y eliminas esa brecha de seguridad donde la IA puede omitir casos que tu si necesitas contemplar.
+Con esta metodología, fui capaz de desarrollar el analizador en aproximadamente 30 minutos. Invertí más tiempo en crear el prompt, definir la arquitectura inicial (skeleton) y analizar el código generado por la IA que en escribir el código funcional.
 
-# Comandos de inicializacion
+Considero que es un tiempo bastante aceptable para el desarrollo de proyectos con IA, ya que siempre se necesita involucramiento humano y eso también requiere tiempo.
 
-Para iniciar el proyecto en el cmd
+Los resultados de la IA mejoran considerablemente cuando se define previamente una estructura clara, junto con las limitaciones y las reglas de negocio. Así se evita asumir que la IA entenderá automáticamente el proyecto y se reduce el riesgo de que omita casos que sí es necesario contemplar.
 
-npm run dev 
+## Comandos de inicialización
 
-Para analizar un archivo especifico
+Para iniciar el proyecto desde CMD:
 
+```bash
+npm run dev
+```
 
+Para analizar un archivo específico:
+
+```bash
+node index.js pruebaArchivoDirecto.txt
+```
