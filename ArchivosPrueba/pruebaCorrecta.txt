@@ -1,0 +1,8 @@
+[INFO] 2025-01-10 User logged in successfully
+[ERROR] 2025-01-10 Failed to connect to database
+[WARNING] 2025-01-11 Invalid password attempt detected
+[WARN] 2025-01-12 User account temporarily locked
+[INFO] 2025-01-13 Configuration file loaded successfully
+[ERROR] 2025-01-14 Database connection timeout
+[INF] 2025-01-15 Service started and ready to accept requests
+[ERR] 2025-01-16 Unable to read configuration file
